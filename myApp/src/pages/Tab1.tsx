@@ -1,11 +1,13 @@
-import useApi, { SearchType } from "../apicall";
+import useApi, { SearchType, SearchResult } from "../apicall";
 import {
   IonApp,
+  IonAvatar,
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
+  IonImg,
   IonItem,
   IonLabel,
   IonList,
@@ -18,17 +20,20 @@ import {
   IonSelectOption,
   IonTitle,
   IonToolbar,
+  useIonAlert,
+  useIonLoading,
   } from "@ionic/react";
   import {useEffect, useState} from 'react';
   import "./Tab1.css";
   import { homeOutline, reorderThreeOutline, apertureOutline} from "ionicons/icons";
   const Tab1: React.FC = () => {
 
-    const{ searchData } = useApi()
-    const [searchTerm, setSearchTerm] = useState('');
-    const [type, setType] = useState<SearchType>(SearchType.all);
-    const [results, setResults] = useState([]);
-
+    const { searchData } = useApi()
+    const [searchTerm, setSearchTerm] = useState('')
+    const [type, setType] = useState<SearchType>(SearchType.all)
+    const [results, setResults] = useState<SearchResult[]>([])
+    const [presentAlert] = useIonAlert()
+    const [loading, dismiss] = useIonLoading()
 
     useEffect(() => {
       console.log('SEARCH')
@@ -38,11 +43,20 @@ import {
       }
 
       const loadData = async() => {
-        const result = await searchData(searchTerm, type)
-        setResults(result)
+        await loading()
+        const result: any = await searchData(searchTerm, type)
+        console.log("🚀 ~ loadData ~ result:", result)
+        await dismiss()
+        
+        if (result?.Error) {
+          presentAlert(result.Error)
+          setResults(result.Error)
+        } else {
+        setResults(result.Search)
+      }
         console.log("🚀 ~ loadData ~ result:", result)
         
-        setResults(result)
+        
       }
       loadData()
 
@@ -121,8 +135,17 @@ import {
     </IonSelect>
   </IonItem>
 
+
   <IonList>
-    
+      {results.map((item: SearchResult) => (
+        <IonItem key={item.imdbID}>
+          <IonAvatar slot='start'>
+            <IonImg src={item.Poster}></IonImg>
+          </IonAvatar>
+          <IonLabel>{item.Title}</IonLabel>
+        </IonItem>
+      )
+      )}
   </IonList>
 
 
