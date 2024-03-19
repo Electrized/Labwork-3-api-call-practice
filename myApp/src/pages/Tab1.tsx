@@ -50,7 +50,7 @@ import {
         
         if (result?.Error) {
           presentAlert(result.Error)
-          setResults(result.Error)
+          //setResults(result.Error) cause of all my issues all along, setting results crashes app
         } else {
         setResults(result.Search)
       }

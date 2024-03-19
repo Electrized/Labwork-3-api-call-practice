@@ -1,3 +1,5 @@
+import { IonAlert } from "@ionic/react"
+
 export enum SearchType {
     all = '',
     movie = 'movie',
@@ -38,12 +40,12 @@ export const useApi = () => {
 
 
 
-    const searchData = async (title: string, type: SearchType): Promise<SearchResult[] | searchError> => {
-    const result = await fetch(
-    `${url}?s=${encodeURI(title)}&type=${type}&apikey=${apiKey}`,
-    
-)
-return result.json() } 
+    const searchData = async (title: string, type: SearchType): Promise<SearchResult[] | searchError[]> => {
+        const result = await fetch(
+        `${url}?s=${encodeURI(title)}&type=${type}&apikey=${apiKey}`,
+        
+    )
+    return result.json() } 
 
 
 const getDetails = async (id: string): Promise<DetailsResult> =>{
